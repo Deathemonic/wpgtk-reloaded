@@ -229,7 +229,7 @@ def process_args(args):
     if args.z or args.A:
         alter_action = color.shuffle_colors if args.z \
                        else color.auto_adjust
-        arg_list = args.z if args.z else args.A
+        arg_list = args.z or args.A
 
         for arg in arg_list:
             colors = color.get_color_list(arg)

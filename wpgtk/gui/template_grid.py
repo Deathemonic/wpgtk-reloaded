@@ -86,11 +86,7 @@ class TemplateGrid(Gtk.Grid):
             for f in filechooser.get_filenames():
                 files.add_template(f)
             self.item_names = files.get_file_list(OPT_DIR, r".*\.base$")
-            self.liststore = Gtk.ListStore(Pixbuf, str)
-            for filen in self.item_names:
-                pixbuf = Gtk.IconTheme.get_default().load_icon(icon, 64, 0)
-                self.liststore.append([pixbuf, filen])
-            self.file_view.set_model(self.liststore)
+            self._extracted_from_on_rm_clicked_19()
         filechooser.destroy()
         self.file_view.unselect_all()
 
@@ -110,13 +106,17 @@ class TemplateGrid(Gtk.Grid):
         if self.current is not None:
             item = self.item_names.pop(self.current)
             files.delete_template(item)
-            self.liststore = Gtk.ListStore(Pixbuf, str)
-            for filen in self.item_names:
-                pixbuf = Gtk.IconTheme.get_default().load_icon(icon, 64, 0)
-                self.liststore.append([pixbuf, filen])
-            self.file_view.set_model(self.liststore)
+            self._extracted_from_on_rm_clicked_19()
             self.current = None
         self.file_view.unselect_all()
+
+    # TODO Rename this here and in `on_add_clicked` and `on_rm_clicked`
+    def _extracted_from_on_rm_clicked_19(self):
+        self.liststore = Gtk.ListStore(Pixbuf, str)
+        for filen in self.item_names:
+            pixbuf = Gtk.IconTheme.get_default().load_icon(icon, 64, 0)
+            self.liststore.append([pixbuf, filen])
+        self.file_view.set_model(self.liststore)
 
     def on_file_click(self, widget, pos):
         self.current = int(str(pos))

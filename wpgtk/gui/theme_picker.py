@@ -19,7 +19,7 @@ PAD = 10
 class mainWindow(Gtk.Window):
 
     def __init__(self, args):
-        Gtk.Window.__init__(self, title='wpgtk ' + __version__)
+        Gtk.Window.__init__(self, title=f'wpgtk {__version__}')
 
         image_name = os.path.join(WPG_DIR, '.current')
         image_name = os.path.realpath(image_name)
@@ -29,7 +29,7 @@ class mainWindow(Gtk.Window):
         # these variables are just to get the image
         # and preview of current wallpaper
         file_name = themer.get_current()
-        logging.info('current wallpaper: ' + file_name)
+        logging.info(f'current wallpaper: {file_name}')
         sample_name = files.get_sample_path(file_name)
 
         self.notebook = Gtk.Notebook()
@@ -132,46 +132,45 @@ class mainWindow(Gtk.Window):
         response = filechooser.run()
 
         if response == Gtk.ResponseType.OK:
-            option_list = Gtk.ListStore(str)
-
-            for f in filechooser.get_filenames():
-                themer.create_theme(f)
-
-            for elem in list(files.get_file_list()):
-                option_list.append([elem])
-
-            self.option_combo.set_model(option_list)
-            self.option_combo.set_entry_text_column(0)
-            self.colorscheme.set_model(option_list)
-            self.colorscheme.set_entry_text_column(0)
-
-            self.cpage.option_combo.set_model(option_list)
-
+            self._extracted_from_on_add_clicked_18(filechooser)
         filechooser.destroy()
+
+    # TODO Rename this here and in `on_add_clicked`
+    def _extracted_from_on_add_clicked_18(self, filechooser):
+        option_list = Gtk.ListStore(str)
+
+        for f in filechooser.get_filenames():
+            themer.create_theme(f)
+
+        self._extracted_from_on_rm_clicked_7(option_list)
+        self.colorscheme.set_entry_text_column(0)
+
+        self.cpage.option_combo.set_model(option_list)
 
     def on_set_clicked(self, widget):
         x = self.option_combo.get_active()
         y = self.colorscheme.get_active()
-        current_walls = files.get_file_list()
-        if current_walls:
+        if current_walls := files.get_file_list():
             filename = current_walls[x]
             colorscheme_file = current_walls[y]
             themer.set_theme(filename, colorscheme_file)
 
     def on_rm_clicked(self, widget):
         x = self.option_combo.get_active()
-        current_walls = files.get_file_list()
-        if current_walls:
+        if current_walls := files.get_file_list():
             filename = current_walls[x]
             themer.delete_theme(filename)
             option_list = Gtk.ListStore(str)
-            for elem in list(files.get_file_list()):
-                option_list.append([elem])
-            self.option_combo.set_model(option_list)
-            self.option_combo.set_entry_text_column(0)
-            self.colorscheme.set_model(option_list)
-
+            self._extracted_from_on_rm_clicked_7(option_list)
             self.cpage.option_combo.set_model(option_list)
+
+    # TODO Rename this here and in `_extracted_from_on_add_clicked_18` and `on_rm_clicked`
+    def _extracted_from_on_rm_clicked_7(self, option_list):
+        for elem in list(files.get_file_list()):
+            option_list.append([elem])
+        self.option_combo.set_model(option_list)
+        self.option_combo.set_entry_text_column(0)
+        self.colorscheme.set_model(option_list)
 
     def combo_box_change(self, widget):
         self.set_button.set_sensitive(True)

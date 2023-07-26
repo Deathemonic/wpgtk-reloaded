@@ -72,7 +72,7 @@ class ColorGrid(Gtk.Grid):
         self.combo_grid.set_row_spacing(PAD)
 
         self.color_list = ['000000'] * 16
-        self.button_list = [Gtk.Button('000000') for x in range(16)]
+        self.button_list = [Gtk.Button('000000') for _ in range(16)]
         self.selected_file = ""
         for button in self.button_list:
             button.connect("pressed", self.on_color_click)
@@ -80,7 +80,7 @@ class ColorGrid(Gtk.Grid):
 
         cont = 0
         for y in range(0, 8, 2):
-            for x in range(0, 4):
+            for x in range(4):
                 label = Gtk.Label(cont)
                 self.colorgrid.attach(label, x, y, 1, 1)
                 self.colorgrid.attach(self.button_list[cont], x, y + 1, 1, 1)
@@ -159,9 +159,7 @@ class ColorGrid(Gtk.Grid):
             else:
                 fgcolor = Gdk.color_parse('#000000')
             button.set_label(self.color_list[x])
-            button.set_sensitive(True)
-            button.modify_bg(Gtk.StateType.NORMAL, gcolor)
-            button.modify_fg(Gtk.StateType.NORMAL, fgcolor)
+            self._extracted_from_on_color_click_9(button, gcolor, fgcolor)
 
     def render_theme(self):
         sample_path = files.get_sample_path(self.selected_file)
@@ -260,26 +258,33 @@ class ColorGrid(Gtk.Grid):
         response = dialog.run()
 
         if response == Gtk.ResponseType.OK:
-            r, g, b, _ = dialog.colorchooser.get_rgba()
-            rgb = list(map(lambda x: round(x*100*2.55), [r, g, b]))
-            hex_color = pywal.util.rgb_to_hex(rgb)
-            widget.set_label(hex_color)
-
-            gcolor = Gdk.color_parse(hex_color)
-            if util.get_hls_val(hex_color, 'light') < 100:
-                fgcolor = Gdk.color_parse('#FFFFFF')
-            else:
-                fgcolor = Gdk.color_parse('#000000')
-
-            widget.set_sensitive(True)
-            widget.modify_bg(Gtk.StateType.NORMAL, gcolor)
-            widget.modify_fg(Gtk.StateType.NORMAL, fgcolor)
-
-            for i, c in enumerate(self.button_list):
-                if c.get_label() != self.color_list[i]:
-                    self.color_list[i] = c.get_label()
-            self.render_sample()
+            self._extracted_from_on_color_click_9(dialog, widget)
         dialog.destroy()
+
+    # TODO Rename this here and in `on_color_click`
+    def _extracted_from_on_color_click_9(self, dialog, widget):
+        r, g, b, _ = dialog.colorchooser.get_rgba()
+        rgb = list(map(lambda x: round(x*100*2.55), [r, g, b]))
+        hex_color = pywal.util.rgb_to_hex(rgb)
+        widget.set_label(hex_color)
+
+        gcolor = Gdk.color_parse(hex_color)
+        fgcolor = (
+            Gdk.color_parse('#FFFFFF')
+            if util.get_hls_val(hex_color, 'light') < 100
+            else Gdk.color_parse('#000000')
+        )
+        self._extracted_from_on_color_click_9(widget, gcolor, fgcolor)
+        for i, c in enumerate(self.button_list):
+            if c.get_label() != self.color_list[i]:
+                self.color_list[i] = c.get_label()
+        self.render_sample()
+
+    # TODO Rename this here and in `render_buttons` and `on_color_click`
+    def _extracted_from_on_color_click_9(self, arg0, gcolor, fgcolor):
+        arg0.set_sensitive(True)
+        arg0.modify_bg(Gtk.StateType.NORMAL, gcolor)
+        arg0.modify_fg(Gtk.StateType.NORMAL, fgcolor)
 
     def combo_box_change(self, widget):
         self.done_lbl.set_text("")
