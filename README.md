@@ -10,7 +10,9 @@
 
 <img align="left" src="https://i.imgur.com/ApSuntN.gif" width="450px"/>
 
-`wpgtk` uses [pywal](https://github.com/dylanaraps/pywal) as its colorscheme generator, but builds upon it with a graphic user interface and other features such as the ability to edit the color-schemes generated and save them with their respective wallpapers, having light and dark themes for dynamic icons, hackable and fast GTK+ theme made specifically for `wpgtk`, custom keywords and values to replace in templates and auto color-scheme sorting to achieve more readable palettes.
+`wpgtk-reloaded` is a gtk4 port of the original `wpgtk` with code refactoring and extra stuff
+
+`wpgtk-reloaded` uses [pywal-reloaded](https://github.com/Deathemonic/pywal-reloaded) which is a fork of [pywal](https://github.com/dylanaraps/pywal), as its colorscheme generator, but builds upon it with a graphic user interface and other features such as the ability to edit the color-schemes generated and save them with their respective wallpapers, having light and dark themes for dynamic icons, hackable and fast GTK+ theme made specifically for `wpgtk`, custom keywords and values to replace in templates and auto color-scheme sorting to achieve more readable palettes.
 
 In short, `wpgtk` is a color-scheme manager with a template system which lets you create templates from any text file and will replace keywords on it when you change your theme, delivering high customizing power.
 
